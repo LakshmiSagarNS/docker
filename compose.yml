@@ -1,0 +1,46 @@
+version: "3.9"
+services:
+  postgres:
+    build:
+      context: ./src/postgres
+      dockerfile: Dockerfile
+    container_name: postgres
+    
+    environment:
+      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: postgres
+      POSTGRES_DB: obsrv
+      
+    networks:
+      - my-net
+    volumes:
+      - crud_postgres-volume:/var/lib/docker/volumes/crud_postgres-volume/_data
+    ports:
+      - "5432:5432"
+  app:
+    build:
+     context: .
+     dockerfile: Dockerfile
+    container_name: crud-docker
+    environment:
+      password: admin
+      user: postgres
+      database: obsrv
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    networks:
+      - my-net
+
+networks:
+   my-net:
+    driver: bridge
+volumes:
+  crud_postgres-volume:
+      driver: local
+        
+  
+
+
+ 
